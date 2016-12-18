@@ -4,6 +4,7 @@
 NSString *tweakIdentifier = @"com.PS.EmojiFontManager";
 NSString *selectedFontKey = @"selectedFont";
 NSString *defaultName = @"Default";
+NSString *fontsPath() { return isiOS7Up ? @"/Library/Themes/EmojiFontManager" : @"/User/Library/Themes/EmojiFontManager"; }
 
 #ifdef TWEAK
 

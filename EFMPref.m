@@ -99,7 +99,7 @@ DeclarePrefsTools()
 - (NSString *)tableView:(UITableView *)table titleForHeaderInSection:(NSInteger)section
 {
 	if (section == 0)
-		return @"Fonts in /Library/Themes/EmojiFontManager";
+		return [NSString stringWithFormat:@"Fonts in %@", [self fontsPath]];
 	return nil;
 }
 
@@ -131,10 +131,15 @@ DeclarePrefsTools()
     return section == [self numberOfSectionsInTableView:tableView] - 1 ? 100 : 0;
 }
 
+- (NSString *)fontsPath
+{
+	return fontsPath();
+}
+
 - (NSArray *)allEmojiFonts
 {
 	NSError *error = nil;
-	NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:@"/Library/Themes/EmojiFontManager" error:&error];
+	NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:[self fontsPath] error:&error];
 	if (error) {
 		HBLogDebug(@"%@", [error localizedDescription]);
 		return @[];

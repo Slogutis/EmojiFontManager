@@ -3,6 +3,7 @@
 #import <Preferences/PSSpecifier.h>
 #import <Preferences/PSTableCell.h>
 #import <SpringBoardServices/SpringBoardServices.h>
+#import "../EmojiLibrary/Header.h"
 #import "Prefs.h"
 #import "Header.h"
 #import <objc/runtime.h>
@@ -76,10 +77,18 @@ DeclarePrefsTools()
 		system("killall SpringBoard");
 }
 
+- (void)resetPreferences
+{
+	UIKeyboardEmojiDefaultsController *defaults = [objc_getClass("UIKeyboardEmojiDefaultsController") sharedController];
+	object_setInstanceVariable(defaults, "_defaults", (void *)[[defaults emptyDefaultsDictionary] retain]);
+	object_setInstanceVariable(defaults, "_isDefaultDirty", (void *)YES);
+	[defaults writeEmojiDefaults];
+}
+
 - (void)setSpecifier:(PSSpecifier *)specifier
 {
 	[super setSpecifier:specifier];
-	self.navigationItem.title = [specifier name];
+	self.navigationItem.title = @"EFM 🚀";
 	if ([self isViewLoaded]) {
 		[(UITableView *)self.view setRowHeight:RowHeight];
 		[(UITableView *)self.view reloadData];
@@ -111,7 +120,7 @@ DeclarePrefsTools()
 		footer2.backgroundColor = UIColor.clearColor;
 		UILabel *lbl2 = [[UILabel alloc] initWithFrame:footer2.frame];
 		lbl2.backgroundColor = [UIColor clearColor];
-		lbl2.text = @"© 2016 Thatchapon Unprasert\n(@PoomSmart)";
+		lbl2.text = @"©️ 2016 Thatchapon Unprasert\n(@PoomSmart)";
 		lbl2.textColor = UIColor.grayColor;
 		lbl2.font = [UIFont systemFontOfSize:14.0f];
 		lbl2.textAlignment = NSTextAlignmentCenter;
@@ -153,7 +162,7 @@ DeclarePrefsTools()
 	if (section == 0)
 		return allEmojiFonts.count + 1;
 	if (section == [self numberOfSectionsInTableView:table] - 1)
-		return 2;
+		return 3;
 	return 0;
 }
 
@@ -170,7 +179,7 @@ DeclarePrefsTools()
 	}
 	else if (indexPath.section == [self numberOfSectionsInTableView:tableView] - 1) {
 		UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"info"] ?: [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"info"] autorelease];
-		cell.textLabel.text = indexPath.row == 0 ? @"💰👉🏻👨🏻‍💻" : @"Respring ❄️";
+		cell.textLabel.text = indexPath.row == 0 ? @"💰👉🏻👨🏻‍💻" : (indexPath.row == 1 ? @"Respring ❄️" : @"Reset emoji preferences");
 		cell.textLabel.font = [UIFont boldSystemFontOfSize:17];
 		cell.textLabel.textAlignment = NSTextAlignmentCenter;
 		return cell;
@@ -196,8 +205,10 @@ DeclarePrefsTools()
 	} else if (section == 1) {
 		if (value == 0)
 			[[UIApplication sharedApplication] openURL:[NSURL URLWithString:PS_DONATE_URL]];
-		else
+		else if (value == 1)
 			[self respring];
+		else
+			[self resetPreferences];
 	}
 }
 

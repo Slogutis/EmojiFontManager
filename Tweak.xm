@@ -35,7 +35,7 @@ extern "C" CFArrayRef CGFontCreateFontsWithPath(CFStringRef);
 extern "C" CFURLRef CFURLCreateCopyAppendingPathExtension(CFAllocatorRef, CFURLRef, CFStringRef);
 %hookf(CFURLRef, CFURLCreateCopyAppendingPathExtension, CFAllocatorRef allocator, CFURLRef url, CFStringRef extension)
 {
-	if (url && CFEqual(extension, CFSTR("ccf")) && ![selectedFont isEqualToString:defaultName]) {
+	if (url && CFEqual(extension, CFSTR("ccf")) && ![selectedFont isEqualToString:defaultName] && fileExist(getPath(selectedFont))) {
 		CFStringRef path = CFURLCopyPath(url);
 		if (CFStringHasPrefix(path, emojiFontPathPrefix))
 			extension = CFSTR("null");
